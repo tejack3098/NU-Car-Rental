@@ -1,5 +1,3 @@
-# OOD Final Project 
-
 # Car Rental Application & Driving Class Appointment
  
 Introduction:
