@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .search{
+            display: flex;
+            justify-content: space-around;
+        }
+        input:focus{
+            outline: none;
+        }
+        .table-striped {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+        }
+        .table-striped th,
+        .table-striped td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .bg-danger {
+            background-color: #2a9d8f !important;
+        }
+        .btn-danger {
+            background-color: #2a9d8f !important; /* Change the background color of buttons with the btn-danger class */
+        }
+    </style>
+</head>
+<body>
+<div class="bg-danger text-white rounded">
+    <div class="row justify-content-center">
+        <h2 class="m-3">Customer Home - Rent or Return cars</h2>
+    </div>
+</div>
+<div class="container mt-5 text-right">
+    <a th:href="@{/CustomerLogout}" class="btn btn-danger">Logout</a>
+</div>
+
+<div class="container">
+    <!-- Alert Message -->
+    <div th:if="${message}" class="alert alert-success">
+        <span th:text="${message}"></span>
+    </div>
+
+    <!-- Search cars Section -->
+    <div class="card">
+        <div class="search">
+            <h2>Search Cars</h2>
+            <form th:action="@{/customer/searchCars}" method="get">
+                <input type="text" id="carSearch" name="keyword" />
+                <button type="submit" class="btn btn-danger">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <h2>Cars in Store</h2>
+        <table class="table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Model</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>FuelType</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="car : ${cars}">
+                <td th:text="${car.carID}"></td>
+                <td th:text="${car.model}"></td>
+                <td th:text="${car.company}"></td>
+                <td th:text="${car.type}"></td>
+                <td th:text="${car.fuelType}"></td>
+                <td>
+                    <form th:action="@{/borrowCar}" method="post">
+                        <input type="hidden" name="carID" th:value="${car.carID}" />
+                        <select name="agentId" class="form-control">
+                            <option th:each="agent : ${agents}"
+                                    th:value="${agent.id}"
+                                    th:text="${agent.firstName} + ' ' + ${agent.lastName}">
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Rent</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+            <!-- Table Content for cars in Library -->
+        </table>
+    </div>
+
+    <!-- cars Borrowed Section -->
+    <div class="card">
+        <div class="search">
+            <h2>Search cars Borrowed</h2>
+            <form th:action="@{/customer/searchCarsBorrowed}" method="get">
+                <input type="text" id="carsBorrowedSearch" name="keyword" />
+                <button type="submit" class="btn btn-danger">Search</button>
+
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <h2>Cars Borrowed</h2>
+        <table class="table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Model</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>FuelType</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="car : ${borrowedCars}">
+                <td th:text="${car.carID}"></td>
+                <td th:text="${car.model}"></td>
+                <td th:text="${car.company}"></td>
+                <td th:text="${car.type}"></td>
+                <td th:text="${car.fuelType}"></td>
+                <td>
+                    <form action="/returnCar" method="post">
+                        <input type="hidden" name="carID" th:value="${car.carID}"/>
+                        <input type="submit" value="Return"/>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+
+            <!-- Table Content for cars Borrowed -->
+        </table>
+    </div>
+
+    <!-- Borrow Requests Section -->
+
+
+    <!-- Private Rooms Section -->
+    <div>
+    <div class="card">
+        <h2>Private Learning Appointments Available</h2>
+        <table class="table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Car Number</th>
+                <th>From</th>
+                <th>To</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="appointment : ${availableAppointments}">
+                <td th:text="${appointment.appointmentId}"></td>
+                <td th:text="${appointment.carNumber}"></td>
+                <form th:action="@{/requestLearningAppointment}" method="post">
+
+                    <input type="hidden" name="appointmentId" th:value="${appointment.appointmentId}" />
+
+                    <td>
+                        <input type="datetime-local" name="fromDateTime" />
+                    </td>
+
+                    <td>
+                        <input type="datetime-local" name="toDateTime" />
+                    </td>
+
+                    <td>
+                        <button type="submit" class="btn btn-primary">Request</button>
+                    </td>
+                </form>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2>Current Appointments</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Car Number</th>
+                <th>From</th>
+                <th>To</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="appointment : ${appointments}">
+                <td th:text="${appointment.appointmentId}"></td>
+                <td th:text="${appointment.carNumber}"></td>
+                <td th:text="${appointment.fromDateTime}"></td>
+                <td th:text="${appointment.toDateTime}"></td>
+                <form th:action="@{/checkoutLearningAppointment}" method="post">
+                    <input type="hidden" name="roomId" th:value="${appointment.appointmentId}" />
+                    <td>
+                        <button type="submit" class="btn btn-primary">Check out</button>
+                    </td>
+                </form>
+                
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Table Content for Private Rooms Available -->
+        </table>
+    </div>
+    </div>
+    <!-- Similar structure for other sections like cars in Store, cars Borrowed, etc. -->
+
+    <div class="bg-danger text-white rounded" style="margin-top: 50px;">
+        <div class="row justify-content-center">
+            <a class="text-white text-decoration-none m-3" th:href="@{/}">Home</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

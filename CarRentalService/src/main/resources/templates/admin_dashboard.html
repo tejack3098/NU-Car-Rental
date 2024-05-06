@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            background-color: #f0f0f0; /* Change the background color of the body */
+        }
+
+        .search {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px; /* Add some top margin to the search div */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff0000; /* Change the border color of focused input fields */
+        }
+
+        .bg-danger {
+            background-color: #2a9d8f !important; /* Change the background color of elements with the bg-danger class */
+        }
+
+        .text-white {
+            color: #ffffff !important; /* Change the text color of elements with the text-white class */
+        }
+        .btn-danger {
+            background-color: #2a9d8f !important; /* Change the background color of buttons with the btn-danger class */
+        }
+        .card {
+            width: 100%; /* Make the width responsive */
+            overflow: auto;
+            margin-bottom: 20px;
+            height: 400px;
+            padding: 20px;
+        }
+        .container {
+            margin: 20px auto;
+        }
+        .card_heading{
+            font-size: 20px;
+        }
+        h2{
+            font-size: 20px;
+        }
+        th{
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="bg-danger text-white rounded">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-8 text-center">
+            <h2 class="m-3">
+                NU Car Rental - Admin Dashboard
+            </h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a th:href="@{/AdminLogout}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="search">
+                    <h2 class="card_heading">Search Cars</h2>
+                    <form th:action="@{/admin/searchCars}" method="get">
+                        <input type="text" id="carSearch" name="keyword" />
+                        <button type="submit" class="btn btn-danger">Search</button>
+                    </form>
+                </div>
+                <hr />
+                <h2 style="font-size:14px; font-weight:bold">Cars in Store</h2>
+                <form th:action="@{/AdminLogin/sortcars}" method="get" id="sortForm">
+                    <input type="hidden" id="sortBy" name="sortBy" value="" />
+                    <div class="table-responsive">
+                        <table class="table-striped" style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>
+                                    ID
+                                    <br>
+                                    <button type="button" class="btn btn-link btn-sm"
+                                            onclick="sortTable('Id')">Sort</button>
+                                </th>
+                                <th>
+                                    Model
+                                    <br>
+                                    <button type="button" class="btn btn-link btn-sm"
+                                            onclick="sortTable('Model')">Sort</button>
+                                </th>
+                                <th>
+                                    Company
+                                    <br>
+                                    <button type="button" class="btn btn-link btn-sm"
+                                            onclick="sortTable('Company')">Sort</button>
+                                </th>
+                                <th>
+                                    Type
+                                    <br>
+                                    <button type="button" class="btn btn-link btn-sm"
+                                            onclick="sortTable('Type')">Sort</button>
+                                </th>
+                                <th>
+                                    Fuel Type
+                                    <br>
+                                    <button type="button" class="btn btn-link btn-sm"
+                                            onclick="sortTable('Fuel Type')">Sort</button>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="car : ${cars}">
+                                <td th:text="${car.carID}"></td>
+                                <td th:text="${car.model}"></td>
+                                <td th:text="${car.company}"></td>
+                                <td th:text="${car.type}"></td>
+                                <td th:text="${car.fuelType}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="search">
+                    <h2>Search Agents</h2>
+                    <form th:action="@{/admin/searchAgents}" method="get">
+                        <input type="text" id="agentSearch" name="keyword" />
+                        <button type="submit" class="btn btn-danger">Search</button>
+                    </form>
+                </div>
+                <hr />
+                <h2 style="font-size:14px; font-weight:bold">Agents</h2>
+                <table class="table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>username</th>
+                        <th>Hours Worked</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="agent : ${agents}">
+                        <td th:text="${agent.id}"></td>
+                        <td th:text="${agent.firstName}"></td>
+                        <td th:text="${agent.lastName}"></td>
+                        <td th:text="${agent.username}"></td>
+                        <td th:text="${agent.hoursWorked}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="search">
+                    <h2>Search Applications</h2>
+                    <form th:action="@{/admin/searchApplications}" method="get">
+                        <input type="text" id="applicationSearch" name="keyword" />
+                        <button type="submit" class="btn btn-danger">Search</button>
+                    </form>
+                </div>
+                <hr />
+                <h2 style="font-size:14px; font-weight:bold">Applications for Agents</h2>
+                <table class="table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Date of Birth</th>
+                        <th>Reason</th>
+                        <th>Experience</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="agentApplication : ${applications}">
+                        <td th:text="${agentApplication.id}"></td>
+                        <td th:text="${agentApplication.firstName}"></td>
+                        <td th:text="${agentApplication.lastName}"></td>
+                        <td th:text="${agentApplication.DoB}"></td>
+                        <td th:text="${agentApplication.reason}"></td>
+                        <td th:text="${agentApplication.experience}"></td>
+                        <td>
+                            <form th:action="@{/acceptApplication}" method="post">
+                                <input type="hidden" name="applicationId" th:value="${agentApplication.id}" />
+                                <button type="submit" class="btn btn-success">Accept</button>
+                            </form>
+                            <form th:action="@{/declineApplication}" method="post">
+                                <input type="hidden" name="applicationId" th:value="${agentApplication.id}" />
+                                <button type="submit" class="btn btn-danger">Decline</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <h2 style="font-size:14px; font-weight:bold">Learning Appointments for Customers</h2>
+                <table class="table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Car Number</th>
+                        <th>Occupied</th>
+                        <th>Username</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="learningAppointment : ${learningAppointments}">
+                        <td th:text="${learningAppointment.appointmentId}"></td>
+                        <td th:text="${learningAppointment.carNumber}"></td>
+                        <td th:text="${learningAppointment.isOccupied}"></td>
+                        <td th:text="${learningAppointment.isOccupied} ? ${learningAppointment.rentedBy.username} : 'Not Rented'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bg-danger text-white rounded" style="margin-top: 50px;">
+    <div class="row justify-content-center">
+        <a class="text-white text-decoration-none m-3" th:href="@{/}">Home</a>
+    </div>
+</div>
+<script>
+    function sortTable(sortBy) {
+        document.getElementById('sortBy').value = sortBy || "Default";
+        document.getElementById('sortForm').submit();
+    }
+</script>
+</body>
+
+</html>
